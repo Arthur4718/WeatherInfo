@@ -82,6 +82,10 @@ public class WeatherController extends AppCompatActivity {
             @Override
             public void onLocationChanged(Location location) {
 
+                Log.d("Weather", "onLocation() callbackr received");
+                String longitude = String.valueOf(location.getLongitude());
+                String latitude = String.valueOf(location.getLatitude());
+
             }
 
             @Override
@@ -119,6 +123,24 @@ public class WeatherController extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_CODE){
+
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Log.d("Clima","onRequestPermissionResult(): Permission Granted!" );
+
+            }else{
+                Log.d("Clima", "Permisssion denied =x");
+            }
+
+            /* NOTE
+                In older verions of Android, the permission is granted during installation.
+                In newer versions the permissions should be granted only when the apps needs to take action.
+
+
+             */
+
+        }
     }
 
 // TODO: Add letsDoSomeNetworking(RequestParams params) here:
