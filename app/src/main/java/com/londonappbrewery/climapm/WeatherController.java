@@ -14,6 +14,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.content.Context;
+import android.widget.Toast;
+
+import com.loopj.android.http.*;
+
+import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
 
 public class WeatherController extends AppCompatActivity {
 
@@ -28,7 +35,7 @@ public class WeatherController extends AppCompatActivity {
     // Distance between location updates (1000m or 1km)
     final float MIN_DISTANCE = 1000;
 
-    // TODO: Set LOCATION_PROVIDER here:
+    //Setting up locatin provider
     String LOCATION_PROVIDER = LocationManager.GPS_PROVIDER;
 
 
@@ -37,7 +44,7 @@ public class WeatherController extends AppCompatActivity {
     ImageView mWeatherImage;
     TextView mTemperatureLabel;
 
-    // TODO: Declare a LocationManager and a LocationListener here:
+    //Setting up location services.
     LocationManager mLocationManager;
     LocationListener mLocationListener;
 
@@ -82,9 +89,16 @@ public class WeatherController extends AppCompatActivity {
             @Override
             public void onLocationChanged(Location location) {
 
-                Log.d("Weather", "onLocation() callbackr received");
+                Log.d("Weather", "onLocation() callback received");
                 String longitude = String.valueOf(location.getLongitude());
                 String latitude = String.valueOf(location.getLatitude());
+
+                RequestParams params = new RequestParams();
+                params.put("lat", latitude);
+                params.put("lon", longitude);
+                getDataFromNetWork(params);
+
+
 
             }
 
@@ -105,7 +119,7 @@ public class WeatherController extends AppCompatActivity {
         };
 
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -114,7 +128,7 @@ public class WeatherController extends AppCompatActivity {
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE);
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
             return;
         }
         mLocationManager.requestLocationUpdates(LOCATION_PROVIDER, MIN_TIME, MIN_DISTANCE, mLocationListener);
@@ -127,10 +141,10 @@ public class WeatherController extends AppCompatActivity {
         if (requestCode == REQUEST_CODE){
 
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                Log.d("Clima","onRequestPermissionResult(): Permission Granted!" );
+                Log.d("Weather","onRequestPermissionResult(): Permission Granted!" );
 
             }else{
-                Log.d("Clima", "Permisssion denied =x");
+                Log.d("Weather", "Permisssion denied =x");
             }
 
             /* NOTE
@@ -143,7 +157,29 @@ public class WeatherController extends AppCompatActivity {
         }
     }
 
-// TODO: Add letsDoSomeNetworking(RequestParams params) here:
+
+
+    private void getDataFromNetWork(RequestParams params){
+
+        AsyncHttpClient client = new AsyncHttpClient();
+        //Runs the task in the background, while the app waits for the response
+
+        client.get(WEATHER_URL, params, new JsonHttpResponseHandler(){
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("Weather", "Success! Json" + response.toString());
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject errorResponse) {
+                Log.e("Weather", "fail" +  e.toString());
+                Log.d("Weather", "Status Code" + statusCode);
+                Toast.makeText(WeatherController.this,"request Failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 
 
