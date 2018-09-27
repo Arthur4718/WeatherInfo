@@ -1,15 +1,25 @@
 package com.londonappbrewery.climapm;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.content.Context;
 
 public class WeatherController extends AppCompatActivity {
 
     // Constants:
+    //Location permission REQUEST CODE.
+    final int REQUEST_CODE = 10;
     final String WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather";
     // App ID to use OpenWeather data
     final String APP_ID = "4cbb41eae6f0dba818238a94c7ff95f7";
@@ -19,8 +29,7 @@ public class WeatherController extends AppCompatActivity {
     final float MIN_DISTANCE = 1000;
 
     // TODO: Set LOCATION_PROVIDER here:
-
-
+    String LOCATION_PROVIDER = LocationManager.GPS_PROVIDER;
 
 
     // Member Variables:
@@ -29,6 +38,8 @@ public class WeatherController extends AppCompatActivity {
     TextView mTemperatureLabel;
 
     // TODO: Declare a LocationManager and a LocationListener here:
+    LocationManager mLocationManager;
+    LocationListener mLocationListener;
 
 
     @Override
@@ -43,7 +54,6 @@ public class WeatherController extends AppCompatActivity {
         ImageButton changeCityButton = (ImageButton) findViewById(R.id.changeCityButton);
 
 
-
         // TODO: Add an OnClickListener to the changeCityButton here:
 
     }
@@ -51,17 +61,67 @@ public class WeatherController extends AppCompatActivity {
 
     // TODO: Add onResume() here:
 
+    @Override
+    protected void onResume() {
+        super.onResume();//Check the app lifecyle for this method
+        Log.d("Weahter", "OnResume() called");
+        Log.d("Weather", "Getting weather for current location");
+        getWeatherForCurrentLocation();
+
+    }
 
 
     // TODO: Add getWeatherForNewCity(String city) here:
 
 
-
     // TODO: Add getWeatherForCurrentLocation() here:
+    private void getWeatherForCurrentLocation() {
+        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        mLocationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
 
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE);
+            return;
+        }
+        mLocationManager.requestLocationUpdates(LOCATION_PROVIDER, MIN_TIME, MIN_DISTANCE, mLocationListener);
+    }
 
-    // TODO: Add letsDoSomeNetworking(RequestParams params) here:
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+// TODO: Add letsDoSomeNetworking(RequestParams params) here:
 
 
 
