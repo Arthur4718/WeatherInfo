@@ -29,7 +29,7 @@ public class WeatherController extends AppCompatActivity {
     final int REQUEST_CODE = 10;
     final String WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather";
     // App ID to use OpenWeather data
-    final String APP_ID = "4cbb41eae6f0dba818238a94c7ff95f7";
+    final String APP_ID = "fb846298483da53470059ca74fbaf1b3";
     // Time between location updates (5000 milliseconds or 5 seconds)
     final long MIN_TIME = 5000;
     // Distance between location updates (1000m or 1km)
@@ -60,7 +60,7 @@ public class WeatherController extends AppCompatActivity {
         mTemperatureLabel = (TextView) findViewById(R.id.tempTV);
         ImageButton changeCityButton = (ImageButton) findViewById(R.id.changeCityButton);
 
-
+        
         // TODO: Add an OnClickListener to the changeCityButton here:
 
     }
@@ -96,6 +96,7 @@ public class WeatherController extends AppCompatActivity {
                 RequestParams params = new RequestParams();
                 params.put("lat", latitude);
                 params.put("lon", longitude);
+                params.put("appid", APP_ID);
                 getDataFromNetWork(params);
 
 
@@ -159,16 +160,17 @@ public class WeatherController extends AppCompatActivity {
 
 
 
-    private void getDataFromNetWork(RequestParams params){
+    private void getDataFromNetWork(RequestParams p){
 
         AsyncHttpClient client = new AsyncHttpClient();
         //Runs the task in the background, while the app waits for the response
 
-        client.get(WEATHER_URL, params, new JsonHttpResponseHandler(){
+        client.get(WEATHER_URL, p, new JsonHttpResponseHandler(){
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d("Weather", "Success! Json" + response.toString());
+
 
             }
 
