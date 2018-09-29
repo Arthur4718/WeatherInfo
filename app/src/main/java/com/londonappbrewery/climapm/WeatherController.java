@@ -33,7 +33,7 @@ public class WeatherController extends AppCompatActivity {
     // App ID to use OpenWeather data
     final String APP_ID = "fb846298483da53470059ca74fbaf1b3";
     // Time between location updates (5000 milliseconds or 5 seconds)
-    final long MIN_TIME = 5000;
+    final long MIN_TIME = 1000;
     // Distance between location updates (1000m or 1km)
     final float MIN_DISTANCE = 1000;
 
@@ -236,5 +236,10 @@ public class WeatherController extends AppCompatActivity {
     // TODO: Add onPause() here:
 
 
+    @Override
+    protected void onPause() {
+        super.onPause();
 
+        if(mLocationManager != null) mLocationManager.removeUpdates(mLocationListener);
+    }
 }
