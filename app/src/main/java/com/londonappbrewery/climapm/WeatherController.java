@@ -65,9 +65,6 @@ public class WeatherController extends AppCompatActivity {
 
     }
 
-
-    // TODO: Add onResume() here:
-
     @Override
     protected void onResume() {
         super.onResume();//Check the app lifecyle for this method
@@ -98,9 +95,6 @@ public class WeatherController extends AppCompatActivity {
                 params.put("lon", longitude);
                 params.put("appid", APP_ID);
                 getDataFromNetWork(params);
-
-
-
             }
 
             @Override
@@ -170,6 +164,12 @@ public class WeatherController extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d("Weather", "Success! Json" + response.toString());
+                WeatherDataModel weatherData = WeatherDataModel.fromJson(response);
+
+
+                updateUI(weatherData);
+
+
 
 
             }
@@ -183,9 +183,25 @@ public class WeatherController extends AppCompatActivity {
         });
     }
 
+    private void updateUI(WeatherDataModel w){
+
+        if(w == null){
+
+            mTemperatureLabel.setText("Error");
+            mCityLabel.setText("Error");
+
+            return;
+        }
+
+        mTemperatureLabel.setText(w.getTemperature());
+        mCityLabel.setText(w.getCity());
+
+        int resourceID = getResources().getIdentifier(w.getMlconName(),"drawable", getPackageName());
+        mWeatherImage.setImageResource(resourceID);
 
 
-    // TODO: Add updateUI() here:
+
+    }
 
 
 
